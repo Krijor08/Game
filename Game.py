@@ -1,5 +1,4 @@
 import mysql.connector
-import re
 from functions import *
 
 game = mysql.connector.connect(
@@ -40,9 +39,14 @@ for x in range(3):
 
 g.execute("SELECT GameTime FROM Players WHERE Player_id = %s;", (globalpid,)) # fetch GameTime from Players table, stored in Players table because different players have different GameTime. Only needs to be done once
 rows = g.fetchone()
-
-ggametime = rows
+for row in rows:
+	ggametime = row
 print(ggametime)
 
-gameplay(command = str(input("Game loaded! \n to perform an action, write the corresponding command.\n")), gametime = ggametime, pid = globalpid)
-#pickup(item = "", pid = globalpid)
+g.execute("SELECT GameDay FROM Players WHERE Player_id = %s;", (globalpid,)) # fetch GameTime from Players table, stored in Players table because different players have different GameTime. Only needs to be done once
+rows = g.fetchone()
+for row in rows:
+	ggameday = row
+print(ggameday)
+
+gameplay(command = str(input("Game loaded! \nTo perform an action, write the corresponding command.\n")), gametime = ggametime, gameday = ggameday, pid = globalpid)

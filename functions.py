@@ -32,24 +32,29 @@ def create_account(startup,):
 	else:
 		create_account(startup = str(input("Command not recognised, try again\nWrite 'continue' to continue from save, or 'new' to create new save: \n")))
 
-def gameplay(command, gametime, pid):
+def gameplay(command, gametime, gameday, pid):
 	command = command.split(".")
-	data = command[1]
+	try:
+		data = command[1]
+	except:
+		data = None
 	command = command[0]
 
 	print(data)
 	print(command)
-
-	if command[0] == str(re.search("^pick up...*")) :
+	sleep(2)
+	if re.search("^pick up...*", command[0]) :
 		pickup(item = data, pid = pid)
-	elif command[0] == "^.*":
-		""
+	elif command[0] == "inventory":
+		inventory(pid = pid)
 
 	if gametime < 21600:
 		gameplay(command = str(input("What do you want to do now?\n")))
 
 	else:
 		print("The day is over.")
+		gameday += 1
+		save = str(input("Do you want to save the game?\n"))
 
 def inventory(pid, ):
 	g.execute("""SELECT ItemName, Quantity 
@@ -90,7 +95,7 @@ def select(): # select what account to use. If no account exists, a new one must
 		g.execute("SELECT * FROM Players WHERE PlayerName = %s;", (selectplayer,))
 		rows = g.fetchall()
 
-		print("Players", selectplayer, "selected. Starting game...\n")
+		print("Player", selectplayer, "selected. Starting game...\n")
 		for row in rows:
 			print(row)
 		sleep(1)
@@ -101,7 +106,7 @@ def select(): # select what account to use. If no account exists, a new one must
 
 		selectplayer = row
 
-		g.execute("SELECT * FROM Players WHERE PlayerName = %s;", (selectplayer,))
+		g.execute("SELECT * FROM Players WHERE PlayerName = %s;", selectplayer)
 		rows = g.fetchall()
 
 		for row in rows:
@@ -116,7 +121,7 @@ def select(): # select what account to use. If no account exists, a new one must
 
 		create_account(startup = "new")
 
-	g.execute("SELECT Player_id FROM Players WHERE PlayerName = %s;", (selectplayer,))
+	g.execute("SELECT Player_id FROM Players WHERE PlayerName = %s;", selectplayer)
 	rows = g.fetchone()
 
 	for row in rows:
