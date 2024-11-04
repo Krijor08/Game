@@ -1,0 +1,34 @@
+USE Game; 
+
+DROP TABLE IF EXISTS Inventory;
+DROP TABLE IF EXISTS Players;
+DROP TABLE IF EXISTS Items;
+
+CREATE TABLE IF NOT EXISTS Players ( 
+	Player_id INT NOT NULL AUTO_INCREMENT,
+	PlayerName VARCHAR(64),
+	Health INT NOT NULL DEFAULT 100,
+	Money INT NOT NULL DEFAULT 0,
+	GameTime INT NOT NULL DEFAULT 0,
+	GameDay INT NOT NULL DEFAULT 0,
+	PRIMARY KEY (Player_id)
+); 
+
+CREATE TABLE IF NOT EXISTS Inventory ( 
+	Item_id INT NOT NULL AUTO_INCREMENT,
+	Player_id INT NOT NULL,
+	ItemName VARCHAR(32) NOT NULL,
+	PRIMARY KEY (Item_id),
+	FOREIGN KEY (Player_id) REFERENCES Players(Player_id)
+);
+
+CREATE TABLE IF NOT EXISTS Items ( 
+	Item_id INT NOT NULL AUTO_INCREMENT,
+	ItemName VARCHAR(32) NOT NULL,
+	PRIMARY KEY (Item_id)
+);
+
+-- INSERT INTO TABLE Items (ItemName)
+-- VALUES (
+--	"Axe", "Knife", "etc..."
+-- );
