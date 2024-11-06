@@ -43,13 +43,13 @@ def gameplay(command, gametime, gameday, pid):
 	print(data)
 	print(command)
 	sleep(2)
-	if re.search("^pick up...*", command[0]) :
+	if re.search("^pick up*", command) :
 		pickup(item = data, pid = pid)
-	elif command[0] == "inventory":
+	elif command == "inventory":
 		inventory(pid = pid)
 
 	if gametime < 21600:
-		gameplay(command = str(input("What do you want to do now?\n")))
+		gameplay(command = str(input("What do you want to do now?\n")), gametime = gametime, gameday = gameday, pid = pid)
 
 	else:
 		print("The day is over.")
@@ -67,20 +67,24 @@ def inventory(pid, ):
 
 def pickup(item, pid, ): # called when items shall be picked up, makes sure the item exists then inserts to inventory
 	g.execute("""SELECT ItemName FROM Items
-		WHERE ItemName = %s""", item, ";")
+		WHERE ItemName = %s""", (item,), ";")
 	rows = g.fetchall()
 
 	if rows != []:
 		itemexists = True
+		print(itemexists)
 	else:
 		itemexists = False
-		print("That's not a valid item, try again. ")
+		print("That's not a valid item, try again.", itemexists)
 
 	if itemexists == True:
-		query = "INSERT INTO Inventory (ItemName, Player_id) VALUES (%s, %s);"
+		query = "INSERT INTO Inventory (ItemName, Player_id) VALUES %s, %s;"
 		data = [(item, pid)]
 		g.executemany(query, data)
     
+def save():
+	pass
+
 def select(): # select what account to use. If no account exists, a new one must be made.
 	selectplayer = None
 
