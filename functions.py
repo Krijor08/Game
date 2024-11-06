@@ -13,7 +13,7 @@ game = mysql.connector.connect( # establish connection to MySQL
 print(game)
 
 g = game.cursor() 
-game.autocommit = True
+g.autocommit = True
 
 g.execute("USE Game;") # remember to "use" databases before trying to edit them
 
