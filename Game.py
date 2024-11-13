@@ -37,16 +37,23 @@ for x in range(3): # "loading" for interesting effect
 	print("Starting up...\n")
 	sleep(0.5)
 
-g.execute("SELECT GameTime FROM Players WHERE Player_id = %s;", (globalpid,)) # fetch GameTime from Players table, stored in Players table because different players have different GameTime. Only needs to be done once
-rows = g.fetchone() # only expects one row, fetches the result from the SQL query as a tuple
-for row in rows: # to get the contents in a tuple out from the tuple, I use a for loop. 
-	ggametime = row 
-print(ggametime) # debug purposes only
+g.execute("""
+		SELECT * FROM Players
+		WHERE Player_id = %s;
+		""", globalpid)
+rows = g.fetchone()
 
-g.execute("SELECT GameDay FROM Players WHERE Player_id = %s;", (globalpid,)) # fetch GameDay from Players table
-rows = g.fetchone() # only expects one row
-for row in rows:
-	ggameday = row
-	print(ggameday) # debug purposes only
+playerhealth = rows[2] # g stands for global, 
+money = rows[3]
+gametime = rows[4]
+gameday = rows[5]
 
-gameplay(command = str(input("Game loaded! \nTo perform an action, write the corresponding command.\n")), gametime = ggametime, gameday = ggameday, pid = globalpid) # first start of the main gameplay loop
+gamesave = gameplay(command = str(input("Game loaded! \nTo perform an action, write the corresponding command.\n")), gametime = gametime, gameday = gameday, pid = globalpid) # first start of the main gameplay loop
+
+
+if gamesave == "save":
+	g.execute("""
+		   SELECT * FROM Players
+		   WHERE Player_id = %s;
+		   """, globalpid)
+	save(gametime = gametime, gameday = gameday, playerhealth = playerhealth, money = money, pid = globalpid)

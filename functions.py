@@ -2,8 +2,6 @@ import mysql.connector
 import re
 from time import sleep
 
-# import re # https://www.w3schools.com/python/python_regex.asp use this for recognising user input as different commands
-
 game = mysql.connector.connect( # establish connection to MySQL
 	host="localhost",
 	user="Python",
@@ -19,10 +17,14 @@ g.execute("USE Game;") # remember to "use" databases before trying to edit them
 
 def create_account(startup,):
 	if startup == "new":
-		query = "INSERT INTO Players (PlayerName, Money) VALUES (%s, %s);"
-		data = [(str(input("Write the name of the new player: \n")), 0)]
-		g.executemany(query, data)
-		startup = "continue"
+		try:
+			query = "INSERT INTO Players (PlayerName, Money) VALUES (%s, %s);"
+			data = [(str(input("Write the name of the new player: \n")), 0)]
+			g.executemany(query, data)
+			startup = "continue"
+		except:
+			print("An error occured, please try again.")
+			create_account(startup = "new")
 
 	elif startup == "continue":
 		sleep(0.5)
@@ -46,7 +48,9 @@ def gameplay(command, gametime, gameday, pid):
 	if re.search("^pick up*", command) :
 		pickup(item = data, pid = pid)
 	elif command == "inventory":
-		inventory(pid = pid)
+		pass#inventory(pid = pid)
+	elif command == "save":
+		return("save")
 
 	if gametime < 21600:
 		gameplay(command = str(input("What do you want to do now?\n")), gametime = gametime, gameday = gameday, pid = pid)
@@ -54,20 +58,21 @@ def gameplay(command, gametime, gameday, pid):
 	else:
 		print("The day is over.")
 		gameday += 1
-		save = str(input("Do you want to save the game?\n"))
+		savegame = str(input("Do you want to save the game?\n"))
+		if savegame == "Yes":
+			save()
 
-def inventory(pid, ):
-	g.execute("""SELECT ItemName, Quantity 
-		FROM Inventory
-		WHERE Player_id = %s
-		JOIN Players ON Players.Player_id = Inventory.Player_id;""", (pid,))
-	rows = g.fetchall()
-	for row in rows:
-		print(row)
+# def inventory(pid, ):
+#	g.execute("""SELECT ItemName, Quantity 
+#		WHERE Player_id = %s
+#		JOIN Players ON Players.Player_id = Inventory.Player_id;""", (pid,))
+#	rows = g.fetchall()
+#	for row in rows:
+#		print(row)
 
 def pickup(item, pid, ): # called when items shall be picked up, makes sure the item exists then inserts to inventory
 	g.execute("""SELECT ItemName FROM Items
-		WHERE ItemName = %s""", (item,), ";")
+		WHERE ItemName = %s;""", (item,))
 	rows = g.fetchall()
 
 	if rows != []:
@@ -82,8 +87,13 @@ def pickup(item, pid, ): # called when items shall be picked up, makes sure the 
 		data = [(item, pid)]
 		g.executemany(query, data)
     
-def save():
-	pass
+def save(gametime, gameday, playerhealth, money, pid):
+	query = """UPDATE Player
+		SET Health = %s, GameTime = %s, GameDay = %s, Money = %s
+		WHERE Player_id = %s;
+		"""
+	data = (playerhealth, gametime, gameday, money, pid)
+	g.execute(query, data)
 
 def select(): # select what account to use. If no account exists, a new one must be made.
 	selectplayer = None
@@ -110,7 +120,7 @@ def select(): # select what account to use. If no account exists, a new one must
 
 		selectplayer = row
 
-		g.execute("SELECT * FROM Players WHERE PlayerName = %s;", selectplayer)
+		g.execute("SELECT PlayerName, Health, Money, GameTime, GameDay FROM Players WHERE PlayerName = %s;", selectplayer)
 		rows = g.fetchall()
 
 		for row in rows:
