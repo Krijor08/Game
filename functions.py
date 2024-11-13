@@ -48,7 +48,7 @@ def gameplay(command, gametime, gameday, pid):
 	if re.search("^pick up*", command) :
 		pickup(item = data, pid = pid)
 	elif command == "inventory":
-		pass#inventory(pid = pid)
+		inventory(pid = pid)
 	elif command == "save":
 		return("save")
 
@@ -62,13 +62,13 @@ def gameplay(command, gametime, gameday, pid):
 		if savegame == "Yes":
 			save()
 
-# def inventory(pid, ):
-#	g.execute("""SELECT ItemName, Quantity 
-#		WHERE Player_id = %s
-#		JOIN Players ON Players.Player_id = Inventory.Player_id;""", (pid,))
-#	rows = g.fetchall()
-#	for row in rows:
-#		print(row)
+def inventory(pid, ):
+	g.execute("""SELECT ItemName, Quantity 
+		WHERE Player_id = %s
+		JOIN Players ON Players.Player_id = Inventory.Player_id;""", (pid,))
+	rows = g.fetchall()
+	for row in rows:
+		print(row)
 
 def pickup(item, pid, ): # called when items shall be picked up, makes sure the item exists then inserts to inventory
 	g.execute("""SELECT ItemName FROM Items
@@ -139,7 +139,6 @@ def select(): # select what account to use. If no account exists, a new one must
 	rows = g.fetchone()
 
 	for row in rows:
-		continue
-
-	pid = row
+		pid = row
+		
 	return pid

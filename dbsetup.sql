@@ -1,18 +1,15 @@
 USE Game; 
 
-TRUNCATE TABLE Inventory;
-TRUNCATE TABLE Items;
-TRUNCATE TABLE Players;
+DROP TABLE IF EXISTS Inventory;
 
 CREATE TABLE IF NOT EXISTS Players ( 
 	Player_id INT NOT NULL AUTO_INCREMENT,
-	PlayerName VARCHAR(64),
+	PlayerName VARCHAR(64) UNIQUE,
 	Health INT NOT NULL DEFAULT 100,
 	Money INT NOT NULL DEFAULT 0,
 	GameTime INT NOT NULL DEFAULT 0,
 	GameDay INT NOT NULL DEFAULT 0,
 	PRIMARY KEY (Player_id)
-	UNIQUE (PlayerName)
 ); 
 
 CREATE TABLE IF NOT EXISTS Inventory ( 
@@ -29,6 +26,8 @@ CREATE TABLE IF NOT EXISTS Items (
 	PRIMARY KEY (Item_id)
 );
 
+TRUNCATE TABLE Items;
+TRUNCATE TABLE Players;
 -- INSERT INTO TABLE Items (ItemName)
 -- VALUES (
 --	"Axe", "Knife", "etc..."
