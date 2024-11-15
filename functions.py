@@ -87,7 +87,7 @@ def pickup(item, pid, ): # called when items shall be picked up, makes sure the 
 		g.executemany(query, data)
     
 def save(gametime, gameday, playerhealth, money, pid):
-	query = """UPDATE Player
+	query = """UPDATE Players
 		SET Health = %s, GameTime = %s, GameDay = %s, Money = %s
 		WHERE Player_id = %s;
 		"""
