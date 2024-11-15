@@ -1,19 +1,27 @@
 CREATE DATABASE IF NOT EXISTS Game;
 USE Game; 
 
+<<<<<<< HEAD
 DROP TABLE Inventory;
 TRUNCATE TABLE Items;
 TRUNCATE TABLE Players;
+=======
+DROP TABLE IF EXISTS Inventory;
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
 
 CREATE TABLE IF NOT EXISTS Players ( 
 	Player_id INT NOT NULL AUTO_INCREMENT,
-	PlayerName VARCHAR(64),
+	PlayerName VARCHAR(64) UNIQUE,
 	Health INT NOT NULL DEFAULT 100,
 	Money INT NOT NULL DEFAULT 0,
 	GameTime INT NOT NULL DEFAULT 0,
 	GameDay INT NOT NULL DEFAULT 0,
+<<<<<<< HEAD
 	PRIMARY KEY (Player_id),
 	UNIQUE (PlayerName)
+=======
+	PRIMARY KEY (Player_id)
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
 ); 
 
 CREATE TABLE IF NOT EXISTS Inventory ( 
@@ -30,8 +38,13 @@ CREATE TABLE IF NOT EXISTS Items (
 	PRIMARY KEY (Item_id)
 );
 
+<<<<<<< HEAD
 
 
+=======
+TRUNCATE TABLE Items;
+TRUNCATE TABLE Players;
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
 -- INSERT INTO TABLE Items (ItemName)
 -- VALUES (
 --	"Axe", "Knife", "etc..."

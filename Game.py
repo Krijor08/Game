@@ -1,7 +1,13 @@
 import mysql.connector
 from functions import *
 
+<<<<<<< HEAD
 game = mysql.connector.connect( # establish connection to MySQL
+=======
+globalpid = None
+
+game = mysql.connector.connect(
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
 	host="localhost",
 	user="Python",
 	password="1234"
@@ -19,11 +25,24 @@ rows = g.fetchall()
 print(rows, "<-- if this shows [] there are no accounts")
 
 if rows == []: # if there's no save, there's nothing to continue on, skip asking entirely
+<<<<<<< HEAD
 	create_account(startup = "new",)
+=======
+	create_account(startup = "new", )
+
+elif len(rows) == 1:
+	for row in rows:
+		globalpid = row
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
 else:
 	create_account(startup = str(input('Welcome to ""! \nWrite "continue" to continue from save, or "new" to create new save: \n')),) # there are existing accounts, asking is necessary
-
-globalpid = select() # the select() function returns a value, which is the unique player id
+try:
+	if globalpid == row:
+		select()
+	else:
+		globalpid = select()
+except:
+	globalpid = select() # the select() function returns a value, which is the unique player id
 
 for x in range(3): # "loading" for interesting effect
 	print("Starting up")
@@ -39,6 +58,12 @@ g.execute("""
 		SELECT * FROM Players
 		WHERE Player_id = %s;
 		""", (globalpid,))
+<<<<<<< HEAD
+=======
+rows = g.fetchall()
+
+print(rows, "playerdata")
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
 
 row = g.fetchone()
 
@@ -56,5 +81,10 @@ if gamesave == "save":
 	g.execute("""
 		   SELECT * FROM Players
 		   WHERE Player_id = %s;
+<<<<<<< HEAD
 		   """, (globalpid,))
 	save(gametime = gametime, gameday = gameday, playerhealth = playerhealth, money = money, pid = globalpid)
+=======
+		   """, globalpid)
+	save(gametime = gametime, gameday = gameday, playerhealth = playerhealth, money = money, pid = globalpid)
+>>>>>>> aba6947f00c28937f653857617272d5894dee504
