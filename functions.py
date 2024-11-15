@@ -133,10 +133,6 @@ def select(): # select what account to use. If no account exists, a new one must
 
 	for row in rows:
 		pid = row
-<<<<<<< HEAD
 
 	print(pid)
-=======
-		
->>>>>>> aba6947f00c28937f653857617272d5894dee504
 	return pid
