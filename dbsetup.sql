@@ -1,6 +1,7 @@
+CREATE DATABASE IF NOT EXISTS Game;
 USE Game; 
 
-TRUNCATE TABLE Inventory;
+DROP TABLE Inventory;
 TRUNCATE TABLE Items;
 TRUNCATE TABLE Players;
 
@@ -11,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Players (
 	Money INT NOT NULL DEFAULT 0,
 	GameTime INT NOT NULL DEFAULT 0,
 	GameDay INT NOT NULL DEFAULT 0,
-	PRIMARY KEY (Player_id)
+	PRIMARY KEY (Player_id),
 	UNIQUE (PlayerName)
 ); 
 
@@ -28,6 +29,8 @@ CREATE TABLE IF NOT EXISTS Items (
 	ItemName VARCHAR(32) NOT NULL,
 	PRIMARY KEY (Item_id)
 );
+
+
 
 -- INSERT INTO TABLE Items (ItemName)
 -- VALUES (

@@ -11,20 +11,19 @@ game = mysql.connector.connect( # establish connection to MySQL
 print(game)
 
 g = game.cursor() 
-g.autocommit = True
+game.autocommit = True
 
 g.execute("USE Game;") # remember to "use" databases before trying to edit them
 
 def create_account(startup,):
 	if startup == "new":
-		try:
-			query = "INSERT INTO Players (PlayerName, Money) VALUES (%s, %s);"
-			data = [(str(input("Write the name of the new player: \n")), 0)]
-			g.executemany(query, data)
-			startup = "continue"
-		except:
-			print("An error occured, please try again.")
-			create_account(startup = "new")
+		
+		query = "INSERT INTO Players (PlayerName, Money) VALUES (%s, %s);"
+		data = [(str(input("Write the name of the new player: \n")), 0)]
+		g.executemany(query, data)
+		startup = "continue"
+		print("New player made successfully. Restart the game to continue.")
+		exit()
 
 	elif startup == "continue":
 		sleep(0.5)
@@ -106,13 +105,7 @@ def select(): # select what account to use. If no account exists, a new one must
 			print(row)
 		selectplayer = str(input("Write name to select player: \n"))
 
-		g.execute("SELECT * FROM Players WHERE PlayerName = %s;", (selectplayer,))
-		rows = g.fetchall()
-
 		print("Player", selectplayer, "selected. Starting game...\n")
-		for row in rows:
-			print(row)
-		sleep(1)
 
 	elif len(rows) == 1:
 		for row in rows:
@@ -120,13 +113,7 @@ def select(): # select what account to use. If no account exists, a new one must
 
 		selectplayer = row
 
-		g.execute("SELECT PlayerName, Health, Money, GameTime, GameDay FROM Players WHERE PlayerName = %s;", selectplayer)
-		rows = g.fetchall()
-
-		for row in rows:
-			print(row)
-
-		print("Starting game...")
+		print(selectplayer,"is the only player found. Starting game...")
 
 	elif rows == []: 
 		print("There are no players, create a new to continue. \n") 
@@ -134,12 +121,18 @@ def select(): # select what account to use. If no account exists, a new one must
 		selectplayer = None
 
 		create_account(startup = "new")
+	
+	g.execute("SELECT PlayerName, Health, Money, GameTime, GameDay FROM Players WHERE PlayerName = %s;", (selectplayer,))
+	rows = g.fetchall()
 
-	g.execute("SELECT Player_id FROM Players WHERE PlayerName = %s;", selectplayer)
+	for row in rows:
+		print(row)
+
+	g.execute("SELECT Player_id FROM Players WHERE PlayerName = %s;", tuple(selectplayer))
 	rows = g.fetchone()
 
 	for row in rows:
-		continue
+		pid = row
 
-	pid = row
+	print(pid)
 	return pid

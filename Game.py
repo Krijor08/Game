@@ -1,7 +1,7 @@
 import mysql.connector
 from functions import *
 
-game = mysql.connector.connect(
+game = mysql.connector.connect( # establish connection to MySQL
 	host="localhost",
 	user="Python",
 	password="1234"
@@ -19,13 +19,11 @@ rows = g.fetchall()
 print(rows, "<-- if this shows [] there are no accounts")
 
 if rows == []: # if there's no save, there's nothing to continue on, skip asking entirely
-	create_account(startup = "new", )
+	create_account(startup = "new",)
 else:
 	create_account(startup = str(input('Welcome to ""! \nWrite "continue" to continue from save, or "new" to create new save: \n')),) # there are existing accounts, asking is necessary
 
 globalpid = select() # the select() function returns a value, which is the unique player id
-
-print(globalpid, "Game pid") # pid stands for Player ID
 
 for x in range(3): # "loading" for interesting effect
 	print("Starting up")
@@ -40,13 +38,16 @@ for x in range(3): # "loading" for interesting effect
 g.execute("""
 		SELECT * FROM Players
 		WHERE Player_id = %s;
-		""", globalpid)
-rows = g.fetchone()
+		""", (globalpid,))
 
-playerhealth = rows[2] # g stands for global, 
-money = rows[3]
-gametime = rows[4]
-gameday = rows[5]
+row = g.fetchone()
+
+playerhealth = row[2]
+money = row[3]
+gametime = row[4]
+gameday = row[5]
+
+print(playerhealth, money, gametime, gameday)
 
 gamesave = gameplay(command = str(input("Game loaded! \nTo perform an action, write the corresponding command.\n")), gametime = gametime, gameday = gameday, pid = globalpid) # first start of the main gameplay loop
 
@@ -55,5 +56,5 @@ if gamesave == "save":
 	g.execute("""
 		   SELECT * FROM Players
 		   WHERE Player_id = %s;
-		   """, globalpid)
+		   """, (globalpid,))
 	save(gametime = gametime, gameday = gameday, playerhealth = playerhealth, money = money, pid = globalpid)
