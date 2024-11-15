@@ -21,7 +21,6 @@ rows = g.fetchall()
 print(rows, "<-- if this shows [] there are no accounts")
 
 if rows == []: # if there's no save, there's nothing to continue on, skip asking entirely
-
 	create_account(startup = "new", )
 
 else:
