@@ -3,9 +3,9 @@ import re
 from time import sleep
 
 game = mysql.connector.connect( # establish connection to MySQL
-	host="localhost",
-	user="Python",
-	password="1234"
+	host="localhost",  
+	user="Python",     # change these according to your MySQL user credentials,
+	password="1234"    # or create a new account with these credentials.
 )
 
 print(game)
@@ -13,7 +13,7 @@ print(game)
 g = game.cursor() 
 game.autocommit = True
 
-g.execute("USE Game;") # remember to "use" databases before trying to edit them
+g.execute("USE Game;") # if no database is used, MySQL won't know where to find the tables you try to edit
 
 def create_account(startup,):
 	if startup == "new":
@@ -28,15 +28,15 @@ def create_account(startup,):
 	elif startup == "continue":
 		sleep(0.5)
 	elif startup == "reset":
-		print("In order to perform reset, open dbsetup.sql and run code. If SQLTools is not installed, or it doesn't work, open MySQL and run code from dbsetup.sql.")
+		print("In order to perform reset, open dbsetup.sql in VSCode and run code. If SQLTools is not installed, or it doesn't work, open MySQL and run code from dbsetup.sql.")
 		print("WARNING: That will delete everything, only run dbsetup.sql code if absolutely necessary. \nNOTE: Tables are possibly outdated, double check.")
 	else:
 		create_account(startup = str(input("Command not recognised, try again\nWrite 'continue' to continue from save, or 'new' to create new save: \n")))
 
-def gameplay(command, gametime, gameday, pid):
-	command = command.split(".")
+def gameplay(query, gametime, gameday, pid):
+	command = query.split(".") # queries often consist of a command like "pick up", and an item or attribute. 
 	try:
-		data = command[1]
+		data = command[1] # if this doesn't work, the query only has 
 	except:
 		data = None
 	command = command[0]
@@ -52,7 +52,7 @@ def gameplay(command, gametime, gameday, pid):
 		return("save")
 
 	if gametime < 21600:
-		gameplay(command = str(input("What do you want to do now?\n")), gametime = gametime, gameday = gameday, pid = pid)
+		gameplay(query = str(input("What do you want to do now?\n")), gametime = gametime, gameday = gameday, pid = pid)
 
 	else:
 		print("The day is over.")
@@ -99,21 +99,17 @@ def select(): # select what account to use. If no account exists, a new one must
 
 	g.execute("SELECT PlayerName FROM Players;")
 	rows = g.fetchall()
-
+	for row in rows:
+		print(row)
 	if len(rows) > 1:
-		for row in rows:
-			print(row)
 		selectplayer = str(input("Write name to select player: \n"))
 
-		print("Player", selectplayer, "selected. Starting game...\n")
+		print(f"Player {selectplayer} selected. Starting game...\n")
 
 	elif len(rows) == 1:
-		for row in rows:
-			print(row)
+		selectplayer = row[0]
 
-		selectplayer = row
-
-		print(selectplayer,"is the only player found. Starting game...")
+		print(f"{selectplayer} is the only player found. Starting game...")
 
 	elif rows == []: 
 		print("There are no players, create a new to continue. \n") 
@@ -122,17 +118,16 @@ def select(): # select what account to use. If no account exists, a new one must
 
 		create_account(startup = "new")
 	
-	g.execute("SELECT PlayerName, Health, Money, GameTime, GameDay FROM Players WHERE PlayerName = %s;", (selectplayer,))
+	g.execute("SELECT PlayerName, Health, Money, GameTime, GameDay FROM Players WHERE PlayerName = %s;", (str(selectplayer),))
 	rows = g.fetchall()
 
 	for row in rows:
 		print(row)
 
-	g.execute("SELECT Player_id FROM Players WHERE PlayerName = %s;", tuple(selectplayer))
-	rows = g.fetchone()
+	g.execute("SELECT Player_id FROM Players WHERE PlayerName = %s;", (str(selectplayer),))
+	row = g.fetchone()
 
-	for row in rows:
-		pid = row
+	pid = row[0]
 
 	print(pid)
 	return pid
